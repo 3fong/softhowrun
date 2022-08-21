@@ -11,5 +11,7 @@ public class NumPrecisionTest {
             num += 0.1;
         }
         System.out.println(num);
+        float i = 2 >> 3;
+        System.out.println((float)i);
     }
 }
