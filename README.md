@@ -502,6 +502,107 @@ DLL文件的价值: 函数共享.节省磁盘和内存空间.修改时不需要�
 5. WYSIWYG是什么
 
 
+利用计算机运行程序大部分是为了提高处理效率.这些程序统称为"应用".应用通过操作系统来间接控制硬件.    
+监控程序: 仅具有加载和运行功能的程序.它是操作系统的原型.先启动监控程序,程序员可以根据需要将应用加载到内存中运行.    
+操作系统本身并不是单独的程序,而是多个程序的集合体.它抽取了公共的应用运行依赖程序.    
+主要包括三部分: 控制程序,编程语言处理器,使用程序
+
+![操作系统](https://img1.baidu.com/it/u=816365941,3384452582&fm=253&fmt=auto&app=138&f=JPEG?w=851&h=242)
+
+操作系统让应用与硬件隔离,程序员无需考虑硬件问题.但掌握基本的硬件知识,并借助操作系统进行抽象化,可以大大提高编程效率.    
+应用的可执行文件指计算机CPU可以直接解释并运行的本地代码.它无法直接控制计算机硬件,而是通过操作系统间接控制.    
+操作系统的硬件控制功能通过系统调用,它指函数及调用函数的行为.    
+高级编程语言并不依赖于特定的操作系统.通过几乎相同的源代码,编译时将其转换成相应操作系统的系统调用.也可以直接调用指定的操作系统的系统调用,但是存在移植性差问题.
+
+操作系统和高级编程语言使硬件抽象化:    
+操作系统和高级编程语言封装了具体的硬件操作,使得硬件的使用只是一种概念,让开发人员无需关注具体硬件运行,只要按需求传入对应的参数即可.比如文件读取.它涉及磁盘,CPU,内存等硬件,但是实际使用只要调用具体的方法即可,文件本身也只是一个流的概念而已.
+
+windowns操作系统特征:    
+> 32/64位操作系统
+通过api函数集来提供系统调用.通过DLL提供
+提供采用了GUI(Graphical User Interface)图形用户界面的用户界面.事件处理机制,不再限制用户操作步骤,想点那里点哪里
+通过WYSIWYG实现打印输出.所见即所得.
+提供多任务功能.时钟分割技术.以程序中函数为单位来进行时钟分割(多线程)的功能
+提供网络功能及数据库功能
+通过即插即用实现设备驱动的自动设定.
+
+时钟分割技术: 在短时间间隔内,多个程序切换运行的方式.在用户看来,就是多个程序同时运行(并行).    
+
+应用运行环境:
+
+![](https://img-blog.csdnimg.cn/20210607174653379.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0p1c3RESTAyMDk=,size_16,color_FFFFFF,t_70)  
+
+即插即用(Plug-and-Play): 新的设备连接后立刻就可以使用的机制.新设备连接到计算机后,系统会自动安装和设定用来控制该设备的设备驱动程序.
+
+
+### 汇编语言与程序
+
+1. 本地代码指令中,表示其功能的英语缩写称为什么
+2. 汇编语言的源代码转换成本地代码的方式称为什么
+3. 本地代码转换成汇编语言的源代码的方式称为什么
+4. 汇编语言的源代码扩展名是什么
+5. 汇编语言程序中的段定义指什么
+6. 汇编语言的跳转指令在什么情况下使用
+
+汇编语言: 使用助记符的编程语言.它也需要转换为本地代码才能运行,但它和本地代码是一一对应的.    
+助记符: 根据操作类型选取的英文单词缩写标识.    
+汇编器: 负责将源代码转换成本地代码工作的程序.转换行为称为汇编    
+反汇编: 将本地代码转换为源代码的过程.
+
+汇编与编译的含义相同,只是针对的语言不同而使用了不同的名词表述.    
+但由于汇编语言与本地代码一一对应,汇编和反汇编没什么问题.但高级语言编译后的本地代码,进行反编译时几乎不可能完全还原源代码.
+
+汇编语言获取方式:    
+1 可以通过本地代码反汇编    
+2 通过C语言编译器将C源代码转换成汇编语言的源代码
+
+C语言源代码:    
+```
+int AddNum(int a,int b)
+{
+    return a + b;
+}
+
+void MyFunc()
+{
+    int c;
+    c = AddNum(123, 456)
+}
+```
+
+汇编语言使用";"作为注解.将上面的C语言转为汇编语言后:    
+![](https://img-blog.csdnimg.cn/20210531103559293.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MTQxMzUxMQ==,size_16,color_FFFFFF,t_70)    
+![](https://img-blog.csdnimg.cn/20210531103617714.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MTQxMzUxMQ==,size_16,color_FFFFFF,t_70)    
+![](https://img-blog.csdnimg.cn/20210531103641821.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MTQxMzUxMQ==,size_16,color_FFFFFF,t_70)    
+
+汇编语言源代码=转换成本地代码的指令+针对汇编器的伪指令    
+伪指令: 负责把程序的构造及汇编的方法指示给汇编器.伪指令本身无法转换成本地代码.
+
+伪指令:    
+![](https://img-blog.csdnimg.cn/20210531104518789.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MTQxMzUxMQ==,size_16,color_FFFFFF,t_70)    
+![](https://img-blog.csdnimg.cn/2021053110453570.png)    
+
+由伪指令由segment,ends围起来的部分,
+
+
+
+![操作码](https://img-blog.csdnimg.cn/20200813104847291.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDYwNDU0MQ==,size_16,color_FFFFFF,t_70#pic_center)
+
+
+![主要寄存器](https://img-blog.csdnimg.cn/20200813104915384.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDYwNDU0MQ==,size_16,color_FFFFFF,t_70#pic_center)
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
