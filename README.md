@@ -619,6 +619,36 @@ mov是最常用的指令,用于寄存器和内存间进行数据存储.
 mov ebp,esp:是把esp内容存储到ebp中.    
 mov eax,dword ptr [ebp+8]: [ebp+8]表示内存地址.如果ebp寄存器中值为100,那么eax寄存器存储的就是100+8=108地址的数据.    
 dword ptr [double word pointer]: 从指定内存地址读出4字节的数据.    
+CPU处理两种尺寸的数据:byte(8位),word(16位).dword是double word双字节,所以是32位,4byte.    
+ptr: pointer是指针    
+[]: 指针指向的内存地址
+
+栈: 存储临时数据的区域.入栈是向栈中存储数据->push;出栈是从栈中读取数据->pop.32位CPU,进行一次push或pop,即可处理32位(4字节)的数据.    
+push,pop指令只有一个操作数.因为对栈进行读写的内存地址是由esp寄存器(栈指针)管理.push,pop指令运行后,esp寄存器自动更新值(push指令是-4,pop指令是+4),所以不需要程序员来指定内存地址.    
+
+MyFunc函数的汇编语言源代码:    
+![](https://img-blog.csdnimg.cn/20210531110545161.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MTQxMzUxMQ==,size_16,color_FFFFFF,t_70)
+
+1,2,7,8是函数调用公共操作    
+3-6: 是函数调用的栈操作流程.    
+3,4:是函数参数入栈->参数入栈顺序是倒序;    
+5:是调用call指令跳转到指定函数的内存地址,汇编语言中函数名表示的是函数所在的内存地址.    
+6:恢复esp栈寄存器初始内存位置(栈清理).入栈时栈空间减少,出栈后栈空间增大.由于数值的单位是4字节.这里增加8既代表pop了两个连续的内存地址(+8比两次pop效率高).
+虽然数据实际还存在于内存上,后续的操作会覆盖这些内容相当于已经被清理.    
+编译器的最优化功能: 让编译后的程序运行速度更快,文件更小.所以汇编语言中返回值c不会再创建变量存储.因为c没有被用到,所以不会再耗成本创建它.
+
+AddNum函数调用前后栈的状态变化:    
+![](https://img-blog.csdnimg.cn/20210531112915475.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MTQxMzUxMQ==,size_16,color_FFFFFF,t_70)
+
+
+
+
+
+
+
+
+
+
 
 
 
