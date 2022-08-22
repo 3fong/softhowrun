@@ -632,20 +632,31 @@ MyFunc函数的汇编语言源代码:
 1,2,7,8是函数调用公共操作    
 3-6: 是函数调用的栈操作流程.    
 3,4:是函数参数入栈->参数入栈顺序是倒序;    
-5:是调用call指令跳转到指定函数的内存地址,汇编语言中函数名表示的是函数所在的内存地址.    
+5:是调用call指令跳转到指定函数的内存地址,汇编语言中函数名表示的是函数所在的内存地址.被调用方法的内存地址会自动入栈,便于执行完后返回该位置    
 6:恢复esp栈寄存器初始内存位置(栈清理).入栈时栈空间减少,出栈后栈空间增大.由于数值的单位是4字节.这里增加8既代表pop了两个连续的内存地址(+8比两次pop效率高).
 虽然数据实际还存在于内存上,后续的操作会覆盖这些内容相当于已经被清理.    
 编译器的最优化功能: 让编译后的程序运行速度更快,文件更小.所以汇编语言中返回值c不会再创建变量存储.因为c没有被用到,所以不会再耗成本创建它.
 
+函数内部处理:    
+![](https://img-blog.csdnimg.cn/2021053111173864.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MTQxMzUxMQ==,size_16,color_FFFFFF,t_70)    
+
+1 ebp寄存器的值在(1)入栈,(5)出栈.栈内操作尽量不影响栈外的其他操作.    
+2 把栈地址esp寄存器的值赋值到ebp寄存器.mov指令不允许指针指向esp寄存器.所以该出使用ebp指向esp内存地址来读写栈内容.esp寄存器中存储着456,123方法入参    
+3 [ebp+8]指定栈中存储的第一个参数123,并读到eax寄存器中.    
+4 add指令将第二个参数[ebp+12]456读出并相加后存储到eax中.先进后出    
+5 ebp出栈.函数的参数通过栈传递,返回值通过寄存器返回    
+6 ret指令后,函数返回目的地的内存地址会自动出栈.
+
+
 AddNum函数调用前后栈的状态变化:    
-![](https://img-blog.csdnimg.cn/20210531112915475.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MTQxMzUxMQ==,size_16,color_FFFFFF,t_70)
+![](https://img-blog.csdnimg.cn/20210531112915475.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MTQxMzUxMQ==,size_16,color_FFFFFF,t_70)    
+![](https://img-blog.csdnimg.cn/20210531112933787.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MTQxMzUxMQ==,size_16,color_FFFFFF,t_70)
 
-
-
-
-
-
-
+a-f是函数调用处理时栈状态的变化.    
+a,b: _Myfunc跳转到AddNum函数(call指令)    
+c: 进入AddNum方法后会增加ebp入栈,这时ebp+返回目的地内存地址共占用8字节,所以获取123的指针为[ebp+8]    
+d: ret指令运行后,AddNum方法调用结束.此时pop ebp同时目的地内存地址自动出栈    
+e: _Myfunc方法的ret指令执行完成.完成栈清理
 
 
 
