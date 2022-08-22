@@ -582,14 +582,43 @@ void MyFunc()
 ![](https://img-blog.csdnimg.cn/20210531104518789.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MTQxMzUxMQ==,size_16,color_FFFFFF,t_70)    
 ![](https://img-blog.csdnimg.cn/2021053110453570.png)    
 
-由伪指令由segment,ends围起来的部分,
+段定义(segment): 由伪指令由segment,ends围起来的部分,用于程序的命令和数据的集合体命名.段定义是一个连续的内存空间    
+_TEXT是指令的段定义    
+_DATA是初始化数据的段定义    
+_BSS是未初始化的数据的段定义    
+group伪指令表示把_BSS和_DATA汇总为名为GROUP的组.    
+围起_AddNum和_MyFunc的_TEXT segment和_TEXT ends,表示_AddNum和_MyFunc属于_TEXT这个段定义.    
+伪指令proc和endp围起的部分,表示的是过程(procedure)的范围.    
+过程: 汇编语言中的函数.    
+末尾的end伪指令表示源代码结束    
 
+汇编语言指令语法结构:    
+> 操作码 + 操作数
 
+操作码表示指令动作    
+操作数表示指令对象    
 
+操作码列表:    
 ![操作码](https://img-blog.csdnimg.cn/20200813104847291.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDYwNDU0MQ==,size_16,color_FFFFFF,t_70#pic_center)
 
 
+本地代码加载到内存->程序运行->CPU读取内存中指令和数据->寄存器进行处理
+
+寄存器的名称会通过汇编语言的源代码指定给操作数.内存中的存储区域是地址编号来区分.CPU内部的标志寄存器和操作系统专用寄存器程序员无法直接操作.    
 ![主要寄存器](https://img-blog.csdnimg.cn/20200813104915384.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80NDYwNDU0MQ==,size_16,color_FFFFFF,t_70#pic_center)
+
+- mov指令: 
+
+mov指令:    
+```
+mov ebp,esp 
+mov eax,dword ptr [ebp+8]
+```
+mov的两个操作数,分别指定数据的存储地和读出源.操作数中可以指定寄存器,常数,标签(附加在地址前),内存地址(方括号围起来的内容).
+mov是最常用的指令,用于寄存器和内存间进行数据存储.    
+mov ebp,esp:是把esp内容存储到ebp中.    
+mov eax,dword ptr [ebp+8]: [ebp+8]表示内存地址.如果ebp寄存器中值为100,那么eax寄存器存储的就是100+8=108地址的数据.    
+dword ptr [double word pointer]: 从指定内存地址读出4字节的数据.    
 
 
 
