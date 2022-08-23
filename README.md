@@ -658,6 +658,42 @@ c: 进入AddNum方法后会增加ebp入栈,这时ebp+返回目的地内存地址
 d: ret指令运行后,AddNum方法调用结束.此时pop ebp同时目的地内存地址自动出栈    
 e: _Myfunc方法的ret指令执行完成.完成栈清理
 
+- 变量初始化
+
+全局变量: 函数外部定义的变量.可在任意位置引用    
+局部变量: 函数内部定义的变量.只能在方法内部引用    
+
+使用全局变量和局部变量的c源码:    
+![](https://img-blog.csdnimg.cn/20210531155100419.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MTQxMzUxMQ==,size_16,color_FFFFFF,t_70)    
+![](https://img-blog.csdnimg.cn/20210531155116530.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MTQxMzUxMQ==,size_16,color_FFFFFF,t_70)
+
+上面源代码中定义了初始化的a1-a5全局变量;b1-b5全局变量未初始化;还有c1-c10初始化的局部变量    
+上面代码转换为汇编语言后如下:    
+
+![](https://img-blog.csdnimg.cn/20210531155215375.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MTQxMzUxMQ==,size_16,color_FFFFFF,t_70)    
+![](https://img-blog.csdnimg.cn/20210531155234590.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MTQxMzUxMQ==,size_16,color_FFFFFF,t_70)    
+
+上面示例用到的汇编语言指令的功能    
+![](https://img-blog.csdnimg.cn/20210531153144220.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MTQxMzUxMQ==,size_16,color_FFFFFF,t_70)    
+
+编译后的程序会被归类到名为段定义的组.    
+初始化的全局变量会被汇总到名为_DATA的段定义中.    
+没有初始化的全局变量会被汇总到名为_BSS的段定义中;    
+指令会被汇总到名为_TEXT的段定义中.    
+
+_DATA的段定义中:    
+(4): _a1 label dword 用于定义_a1标签.标签: 表示相对于段定义起始位置的位置._a1在_DATA段定义开头,相对位置为0._a1就相当于全局变量a1.
+编译后的函数名和变量名前会附加一个下划线,这是语法规定.    
+(5): dd 1 指申请分配了4字节的内存空间存储1这个初始值.dd(define double word) 定义个双字(double word),每个字长度是2个字节,即申请了4字节内存空间.    
+int类型长度是4字节,所以汇编器把int a1=1 转成 _a1 lable dword 和 dd 1;    
+
+_BSS
+
+
+
+
+
+
 
 
 
