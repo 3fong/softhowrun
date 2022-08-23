@@ -6,6 +6,17 @@ import aaa;
 public class NumPrecisionTest {
 
     public static void main(String[] args) {
+        xorPrint();
+    }
+
+    /**
+     * xor = not or
+     */
+    public static void xorPrint() {
+        int i = 10;
+        System.out.println(i^=i);
+    }
+    public static void precisionPrint() {
         float num = 0;
         for(int i = 1;i<=100;i++) {
             num += 0.1;

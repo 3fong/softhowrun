@@ -15,7 +15,7 @@ CPU -> 二进制 -> 内存 -> 硬盘 -> 压缩 -> 操作系统 -> 可执行文�
 - CPU的运行机制
 
 CPU:central processing unit 中央处理器.负责解释和运行程序内容.    
-IC=CPU+内存    
+IC集成电路(interchange)=CPU+内存    
 CPU=寄存器,控制器,运算器,时钟     
 寄存器: 暂存指令,数据等处理对象,内存的一部分.一个CPU有20-100个寄存器    
 控制器:把内存指令,数据读入到寄存器,并根据指令的执行结果控制整个计算机    
@@ -459,7 +459,7 @@ API的目标文件存储在DLL(Dynamic Link Library)文件中.DLL文件是程序
 导入库: 用于定义引用DLL文件名称和文件夹信息的库文件.    
 静态链接库: 存储着目标文件的实体,并直接和EXE文件结合的库文件
 
-![windows中的编译和链接机制](https://image.baidu.com/search/detail?ct=503316480&z=&tn=baiduimagedetail&ipn=d&word=windows%E4%B8%AD%E7%9A%84%E7%BC%96%E8%AF%91%E5%92%8C%E9%93%BE%E6%8E%A5%E6%9C%BA%E5%88%B6&step_word=&ie=utf-8&in=&cl=2&lm=-1&st=-1&hd=&latest=&copyright=&cs=3935522168,4140134256&os=1305749069,3970388880&simid=3935522168,4140134256&pn=10&rn=1&di=7117150749615718401&ln=1842&fr=&fmq=1661072877905_R&ic=&s=undefined&se=&sme=&tab=0&width=&height=&face=undefined&is=0,0&istype=2&ist=&jit=&bdtype=15&spn=0&pi=0&gsm=0&objurl=https%3A%2F%2Fgimg2.baidu.com%2Fimage_search%2Fsrc%3Dhttp%253A%252F%252Fimg-blog.csdnimg.cn%252F20200821235412360.jpg%253Fx-oss-process%253Dimage%252Fwatermark%252Ctype_ZmFuZ3poZW5naGVpdGk%252Cshadow_10%252Ctext_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80Mzg2NTg3NQ%253D%253D%252Csize_16%252Ccolor_FFFFFF%252Ct_70%2523pic_center%26refer%3Dhttp%253A%252F%252Fimg-blog.csdnimg.cn%26app%3D2002%26size%3Df9999%2C10000%26q%3Da80%26n%3D0%26g%3D0n%26fmt%3Dauto%3Fsec%3D1663664911%26t%3D4ddfd53a0d022c44e01baa356c9d6355&rpstart=0&rpnum=0&adpicid=0&nojc=undefined&dyTabStr=MCwxLDMsMiw0LDUsNyw4LDYsOQ%3D%3D)
+![windows中的编译和链接机制](https://img-blog.csdnimg.cn/20210530153718147.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MTQxMzUxMQ==,size_16,color_FFFFFF,t_70)
 
 - exe运行机制
 
@@ -681,13 +681,76 @@ e: _Myfunc方法的ret指令执行完成.完成栈清理
 没有初始化的全局变量会被汇总到名为_BSS的段定义中;    
 指令会被汇总到名为_TEXT的段定义中.    
 
+全局变量根据是否进行初始化分为了两个段定义,其中未被初始化的_BSS值会被定义为0进行初始化,以保证外部引用不会有空值.
+
 _DATA的段定义中:    
 (4): _a1 label dword 用于定义_a1标签.标签: 表示相对于段定义起始位置的位置._a1在_DATA段定义开头,相对位置为0._a1就相当于全局变量a1.
 编译后的函数名和变量名前会附加一个下划线,这是语法规定.    
 (5): dd 1 指申请分配了4字节的内存空间存储1这个初始值.dd(define double word) 定义个双字(double word),每个字长度是2个字节,即申请了4字节内存空间.    
 int类型长度是4字节,所以汇编器把int a1=1 转成 _a1 lable dword 和 dd 1;    
 
-_BSS
+_BSS段定义中:    
+b1-b5的标签_b1-_b5.(6): db 4 dup(?) 表示申请分配了4字节的领域,但值尚未确定的意思.db(define byte): 表示有1个长度是1字节的内存空间.    
+db的单位是字节,单位占用空间是1byte;dd的单位是双字节,单位占用空间是4byte    
+
+具备变量是临时保存在寄存器和栈中,所以无法被函数外部引用.局部变量分配优先使用寄存器,寄存器空间不足时会使用栈.因为寄存器的访问速度比内存快很多.程序运行最优化运行.    
+(8): 往寄存器中分配局部变量的部分,给5个局部变量c1-c5赋值1-5,寄存器被编译器选择用于单纯地存储变量的值.仅对局部变量进行定义是不够的,只有在给局部变量赋值时,才被分配到寄存器的内存区域.    
+(9): 向栈内存地址赋值,每个字节写入一个值.赋值位置在(10)中分配.add esp,-20表示在栈中划分5个字节的空间.这些空间在(9)中被分配    
+(11): mov ebp,esp 把这一处理把esp的值复制到ebp寄存器中.    
+(12): mov esp,ebp 函数出口将(11)中存储在ebp中的值恢复到esp中.    
+
+- 条件语句的汇编语言
+
+C循环处理语句:    
+![](https://img-blog.csdnimg.cn/20210531163508169.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MTQxMzUxMQ==,size_16,color_FFFFFF,t_70)
+
+Cfor语句通过初始值,循环继续条件,计数器更新三种形式表示,汇编语言通过cmp比较指令和跳转指令jl实现.    
+xor ebx,ebx: 为局部变量i申请ebx寄存器的内存空间.任何数自己与自己异或操作都是0,且异或操作比mov ebx,0效率高;    
+@4 call _MySub: 调用_MySub方法并命名别名.    
+inc ebx: 对ebx中值进行自增操作相当于for中的i++    
+cmp ebx,10: 比较i<10,ebx寄存器中的值与10比较    
+jl short @4: 小于则跳转到@4位置.
+
+条件分支:    
+![](https://img-blog.csdnimg.cn/20210531164529318.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MTQxMzUxMQ==,size_16,color_FFFFFF,t_70)    
+![](https://img-blog.csdnimg.cn/20210531164548517.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MTQxMzUxMQ==,size_16,color_FFFFFF,t_70)    
+
+多线程下并发异常:调用两次方法结果为200    
+![](https://img-blog.csdnimg.cn/20210531164930742.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MTQxMzUxMQ==,size_16,color_FFFFFF,t_70)
+
+![](https://img-blog.csdnimg.cn/20210531165149881.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MTQxMzUxMQ==,size_16,color_FFFFFF,t_70)    
+
+### 硬件控制
+
+1. 在汇编语言中,是用什么指令来同外围设备进行输入输出操作?
+2. I/O的全称?
+3. 用来识别外围设备的编号称为什么
+4. IRQ是什么的缩写
+5. DMA是什么缩写
+6. 用来识别具有DMA功能的外围设备的编号称为什么
+
+- 应用与硬件
+
+应用通过操作系统系统调用(API)来间接控制硬件.API是应用调用的函数,windows将其封装为DLL文件.    
+windows控制硬件时通过输入输出指令,常用的有IN,OUT指令.    
+IN指令: 通过指定端口号的端口输入数据,并将其存储在CPU内部寄存器中    
+OUT指令: 把寄存器中存储的数据输出到指定端口号的端口.    
+
+I/O控制器: 交换计算机主机同外围设备间电流特性的集成电路IC.    
+I/O是Input/Output的缩写.显示器,键盘等外围设备都有专用的I/O控制器.    
+端口(port): I/O控制器中用于保存输入输出数据的内存,这个内存也被成为寄存器.    
+CPU的寄存器是用于进行数据运算处理的;I/O寄存器则主要用来临时存储数据的    
+I/O控制器可以控制一个外围设备,也可以控制多个外围设备.各端口间通过端口号进行区分.端口号也称为I/O地址    
+IN指令和OUT指令在端口号指定的端口和CPU间进行数据的输入输出.    
+
+中断请求: IRQ(Interrupt Request).用来暂停当前正在运行的程序,并跳转到其他程序运行的必要机制.该机制称为中断处理.    
+
+
+
+
+
+
+
 
 
 
